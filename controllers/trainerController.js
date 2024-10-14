@@ -23,6 +23,21 @@ export const getTrainers = async () => {
   }
 };
 
+export const deleteTrainer = async (req, res) => {
+  try {
+    const trainerId = req.params.id;
+    const deletedTrainer = await Trainer.findByIdAndDelete(trainerId);
+    
+    if (!deletedTrainer) {
+      return res.status(404).json({ message: "Trainer not found" });
+    }
+    
+    res.status(200).json({ message: "Trainer deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting trainer", error: error.message });
+  }
+};
+
 export const getAllTrainersHandler = async (req, res) => {
   try {
     const trainers = await Trainer.find(); // Get all trainer data
@@ -32,7 +47,6 @@ export const getAllTrainersHandler = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 // Get a specific trainer by ID
 export const getTrainerById = async (req, res) => {

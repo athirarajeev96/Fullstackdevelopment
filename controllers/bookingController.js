@@ -1,19 +1,23 @@
-// controllers/bookingController.js
 import Booking from '../models/Booking.js';
 
-// Create a new booking
 export const createBooking = async (req, res) => {
-  const { trainer, classId, date, time } = req.body;
+    const { user, trainer, classId, date, time } = req.body;
 
-  try {
-    const booking = new Booking({ trainer, classId, date, time });
-    await booking.save();
+    // Validate that the user exists and is passed correctly
+    if (!user) {
+        return res.status(400).json({ message: 'User ID is required.' });
+    }
 
-    res.status(201).json(booking);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+    try {
+        const booking = new Booking({ user, trainer, classId, date, time });
+        await booking.save();
+        res.status(201).json({ message: 'Booking created successfully', booking });
+    } catch (error) {
+        res.status(400).json({ message: 'Booking validation failed: ' + error.message });
+    }
 };
+
+
 
 // Get all bookings for a user
 export const getBookings = async (req, res) => {

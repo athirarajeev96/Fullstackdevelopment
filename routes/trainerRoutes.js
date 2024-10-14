@@ -4,7 +4,8 @@ import {
     getAllTrainersHandler,
     getTrainerById, 
     updateTrainer, 
-    setAvailability 
+    setAvailability,
+    deleteTrainer
 } from '../controllers/trainerController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 
@@ -24,5 +25,8 @@ router.put('/:id', authMiddleware, updateTrainer);
 
 // PUT to set availability for a trainer
 router.put('/:id/availability', authMiddleware, setAvailability);
+
+// DELETE a trainer
+router.delete('/:id', authMiddleware, deleteTrainer);
 
 export default router;

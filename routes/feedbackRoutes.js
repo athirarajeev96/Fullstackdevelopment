@@ -1,14 +1,12 @@
 import express from 'express';
 import { createFeedback, getFeedback } from '../controllers/feedbackController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
-import Feedback from '../models/Feedback.js'; // Adjust the path according to your structure
-import Trainer from '../models/Trainer.js'; // Import the Trainer model
 
 const router = express.Router();
 
 // Submit Feedback
 router.post('/create', authMiddleware, async (req, res) => {
-  const { trainerName, rating, comment } = req.body; // Use trainerName instead of trainerId
+  const { trainerName, rating, comment } = req.body;
 
   // Validate input
   if (!trainerName || !rating || !comment) {
@@ -21,20 +19,7 @@ router.post('/create', authMiddleware, async (req, res) => {
   }
 
   try {
-    // Find the trainer by name
-    const trainer = await Trainer.findOne({ name: trainerName });
-    if (!trainer) {
-      return res.status(404).json({ message: 'Trainer not found.' });
-    }
-
-    // Create new feedback
-    const newFeedback = new Feedback({ 
-      trainerId: trainer._id,  // Use trainerId from the trainer found
-      rating, 
-      comment 
-    });
-    
-    await newFeedback.save();
+    const newFeedback = await createFeedback(trainerName, rating, comment);
     return res.status(201).json({ message: 'Feedback submitted successfully!', feedback: newFeedback });
   } catch (error) {
     console.error("Error saving feedback:", error);
@@ -47,14 +32,7 @@ router.get('/trainer/:trainerName', async (req, res) => {
   const { trainerName } = req.params;
 
   try {
-    // Find the trainer by name
-    const trainer = await Trainer.findOne({ name: trainerName });
-    if (!trainer) {
-      return res.status(404).json({ message: 'Trainer not found.' });
-    }
-
-    // Fetch feedbacks for the trainer
-    const feedbacks = await Feedback.find({ trainerId: trainer._id }); // Use trainerId for finding feedback
+    const feedbacks = await Feedback.find({ trainerName });
     return res.status(200).json(feedbacks);
   } catch (error) {
     console.error("Error fetching feedbacks:", error);
@@ -62,4 +40,4 @@ router.get('/trainer/:trainerName', async (req, res) => {
   }
 });
 
-export default router; // Use ES6 export syntax
+export default router;
