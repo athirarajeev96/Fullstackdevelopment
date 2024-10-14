@@ -1,11 +1,10 @@
 import 'dotenv/config'
 import mongoose from 'mongoose'
-const MONGODB_URL = process.env.MONGODB_URL
-const MONGODB_DB = process.env.MONGODB_DB
+const MONGODB_URI = process.env.MONGODB_URI
 
-const URL = `${MONGODB_URL}/${MONGODB_DB}`
+const URI = `${MONGODB_URI}`
 
-mongoose.connect(URL)
+mongoose.connect(URI)
 .then(()=>console.log('MongoDB connected successfully'))
 .catch(error=>console.log('MongoDB connection failed',error))
 
